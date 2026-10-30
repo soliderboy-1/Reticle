@@ -1,0 +1,503 @@
+// ============= Auth =============
+export interface User {
+  id: string
+  username: string
+  display_name: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+export interface LoginRequest {
+  username: string
+  password: string
+}
+
+export interface RegisterRequest {
+  username: string
+  password: string
+  display_name?: string
+}
+
+export interface AuthResponse {
+  user: User
+  access_token: string
+  token_type: 'bearer'
+}
+
+// ============= Audit enums =============
+export type TaskStatus =
+  | 'created'
+  | 'queued'
+  | 'running'
+  | 'cancelling'
+  | 'succeeded'
+  | 'failed'
+  | 'cancelled'
+  | 'interrupted'
+
+export type AuditMode =
+  | 'full_audit'
+  | 'known_full_scan'
+  | 'unknown_risk_scan'
+  | 'cross_contract_scan'
+
+export type VulnerabilityId =
+  | 'VULN_REENTRANCY'
+  | 'VULN_TIMESTAMP'
+  | 'VULN_DELEGATECALL'
+  | 'VULN_UNCHECKED_LOW_LEVEL_CALLS'
+  | 'VULN_ACCESS_CONTROL'
+  | 'VULN_ARITHMETIC'
+  | 'VULN_BAD_RANDOMNESS'
+  | 'VULN_LOCKED_ETHER'
+  | 'VULN_CROSS_CONTRACT_RISK'
+  | 'VULN_UNKNOWN_ANOMALY'
+  | 'VULN_LLM_SEMANTIC_WARNING'
+
+export type Severity = 'high' | 'medium' | 'low'
+
+export type FindingStatus = 'suspected' | 'confirmed' | 'rejected' | 'inconclusive'
+
+export const VULN_LABELS: Record<VulnerabilityId, string> = {
+  VULN_REENTRANCY: '重入漏洞',
+  VULN_TIMESTAMP: '时间戳依赖',
+  VULN_DELEGATECALL: '不安全委托调用',
+  VULN_UNCHECKED_LOW_LEVEL_CALLS: '未检查低级调用',
+  VULN_ACCESS_CONTROL: '访问控制缺陷',
+  VULN_ARITHMETIC: '算术风险',
+  VULN_BAD_RANDOMNESS: '不安全随机数',
+  VULN_LOCKED_ETHER: '以太锁定风险',
+  VULN_CROSS_CONTRACT_RISK: '跨合约调用风险',
+  VULN_UNKNOWN_ANOMALY: '未知行为异常',
+  VULN_LLM_SEMANTIC_WARNING: 'LLM 未知语义风险',
+}
+
+export const SEVERITY_COLORS: Record<Severity, string> = {
+  high: 'bg-red-600 text-white',
+  medium: 'bg-orange-500 text-white',
+  low: 'bg-yellow-500 text-black',
+}
+
+export const SEVERITY_LABELS: Record<Severity, string> = {
+  high: '高',
+  medium: '中',
+  low: '低',
+}
+
+export type RiskLevel = Severity | 'none'
+
+export const RISK_LEVEL_LABELS: Record<RiskLevel, string> = {
+  high: '高',
+  medium: '中',
+  low: '低',
+  none: '无',
+}
+
+export const RISK_LEVEL_COLORS: Record<RiskLevel, string> = {
+  high: 'bg-red-600 text-white',
+  medium: 'bg-orange-500 text-white',
+  low: 'bg-yellow-500 text-black',
+  none: 'bg-gray-600 text-white',
+}
+
+// ============= Audit Task =============
+export interface AuditTask {
+  task_id: string
+  status: TaskStatus
+  progress: number
+  current_phase?: string
+  mode?: AuditMode
+  can_cancel: boolean
+  can_retry: boolean
+  can_delete: boolean
+  status_url: string
+  artifacts_url: string
+  events_url: string
+  cancel_url: string
+  retry_url: string
+  report_url?: string
+  contract_name?: string
+  created_at?: string
+  started_at?: string
+  finished_at?: string
+  summary?: AuditSummary
+  events?: PipelineLogEvent[]
+}
+
+export interface AuditSummary {
+  total_findings: number
+  confirmed: number
+  suspected: number
+  warnings: number
+  anomaly_count: number
+  contracts?: number
+  input_contract_total?: number
+  normal_contracts?: number
+  abnormal_contracts?: number
+}
+
+export interface AuditTaskListResponse {
+  tasks: AuditTask[]
+  total: number
+  limit: number
+  offset: number
+  status_counts: Record<string, number>
+}
+
+export interface TaskEvent {
+  id: number
+  task_id: string
+  event_time: string
+  event_type: string
+  message: string
+  payload?: Record<string, unknown>
+}
+
+export interface PipelineLogEvent {
+  time: string
+  type: string
+  message: string
+}
+
+export type StageLogStatus =
+  | 'done'
+  | 'running'
+  | 'pending'
+  | 'skipped'
+  | 'failed'
+  | 'cancelled'
+  | 'interrupted'
+
+export interface PipelineStageLog {
+  key: string
+  label: string
+  status: StageLogStatus
+  seconds?: number | null
+  progress_start?: number | null
+  progress_end?: number | null
+}
+
+export interface TaskLogsData {
+  task: AuditTask
+  stages: PipelineStageLog[]
+  total_seconds?: number | null
+  events: PipelineLogEvent[]
+}
+
+// ============= Audit Request =============
+export interface AuditRequest {
+  source_path?: string
+  mode: AuditMode
+  target_vulnerabilities?: VulnerabilityId[]
+  need_verification?: boolean
+  need_repair?: boolean
+  background_risk_screening?: boolean
+  background_screening_action?: 'mark_warning' | 'audit'
+  disable_rag?: boolean
+  async_run?: boolean
+}
+
+// ============= Audit Report =============
+export interface RiskVector {
+  function_id: string
+  contract_name: string
+  function_signature: string
+  lstm_score: number
+  anomaly_score: number
+  gcn_score: number
+  static_score: number
+  business_score: number
+  knowledge_score: number
+  consistency_score: number
+  protection_score: number
+  r_func: number
+  selected_scores: Record<string, number>
+  warning_scores: Record<string, number>
+}
+
+export interface ModelEvidence {
+  evidence_id: string
+  model_id: string
+  scope: 'function' | 'contract'
+  contract_name: string
+  function_signature: string
+  function_id: string
+  vulnerability_id: VulnerabilityId
+  raw_score: number
+  calibrated_confidence: number
+  label?: string
+  location_candidates?: CodeLocation[]
+  feature_evidence?: Record<string, unknown>[]
+  metadata?: Record<string, unknown>
+}
+
+export interface CodeLocation {
+  start_line: number
+  end_line: number
+  start_col?: number
+  end_col?: number
+  snippet?: string
+}
+
+export interface VerificationResult {
+  slither?: {
+    matched: boolean
+    detector?: string
+    description?: string
+  }
+  llm_verification?: {
+    verdict: string
+    reasoning: string
+    confidence: number
+  }
+}
+
+export interface Finding {
+  finding_id: string
+  scope: 'function' | 'contract'
+  status: FindingStatus
+  contract_name: string
+  function_signature: string
+  vulnerability_id: VulnerabilityId
+  severity: Severity
+  confidence: number
+  summary: string
+  evidence: ModelEvidence[]
+  knowledge?: Record<string, unknown>[]
+  location?: CodeLocation[]
+  verification_plan?: VerificationResult
+  repair_suggestion?: RepairSuggestion
+  attack_path?: string
+  key_features?: string[]
+  risk_title?: string
+  risk_type_freeform?: string
+  trust_level?: string
+  requires_human_review?: boolean
+  reasoning?: FindingReasoning
+}
+
+export interface Warning {
+  warning_id: string
+  scope: 'function' | 'contract'
+  status: 'screening_warning' | 'rejected_false_positive' | 'anomaly_warning'
+  contract_name: string
+  function_signature: string
+  target_vulnerability: VulnerabilityId
+  score: number
+  summary: string
+  recommended_action?: {
+    action: string
+    detail?: string
+  }
+}
+
+export interface RepairSuggestion {
+  strategy?: string
+  patch_pattern?: string
+  original_snippet?: string
+  post_fix_checks?: string[]
+}
+
+export interface ReasoningLocation {
+  line?: number
+  code?: string
+  reason?: string
+  start_line?: number
+  end_line?: number
+}
+
+export interface ReasoningVerificationPlan {
+  goal?: string
+  static_checks?: string[]
+  dynamic_checks?: string[]
+}
+
+export interface FindingReasoning {
+  status?: FindingStatus
+  candidate_vulnerability?: VulnerabilityId
+  summary?: string
+  reasoning?: string[]
+  location?: ReasoningLocation[]
+  verification_plan?: ReasoningVerificationPlan
+  repair_suggestion?: RepairSuggestion
+  confidence_adjustment?: number
+}
+
+export interface ReasoningGateMeta {
+  max_candidates: number
+  selected_count: number
+  selected_function_ids: string[]
+  reasons: Record<string, string[]>
+}
+
+export interface WorkflowMeta {
+  mode: AuditMode
+  registered_adapters: string[]
+  reasoning_gate?: Record<string, unknown>
+  adapter_results?: Record<string, unknown>
+  verification?: Record<string, unknown>
+}
+
+export type ContractDetectionStatus = 'normal' | 'abnormal'
+
+export interface ContractProjectSummary {
+  project_id: string
+  project_name: string
+  contract_name: string
+  source_path: string
+  function_count: number
+  finding_count: number
+  warning_count: number
+  max_risk: number
+  severity: Severity | 'none'
+  status: ContractDetectionStatus
+  vulnerabilities: VulnerabilityId[]
+  finding_ids: string[]
+  warning_ids: string[]
+}
+
+export interface ContractSummary {
+  total_contracts: number
+  input_contract_total: number
+  normal_contracts: number
+  abnormal_contracts: number
+  projects: ContractProjectSummary[]
+}
+
+export interface AuditReport {
+  task_id: string
+  mode: AuditMode
+  workflow?: WorkflowMeta
+  risk_vectors: RiskVector[]
+  findings: Finding[]
+  warnings: Warning[]
+  metadata?: Record<string, unknown> & {
+    contract_summary?: ContractSummary
+    reasoning_gate?: ReasoningGateMeta
+  }
+}
+
+// ============= Source File (for Monaco editor) =============
+export interface SourceFileInfo {
+  path: string
+  content: string
+  contract_name?: string
+}
+
+export interface FunctionUnit {
+  name: string
+  signature: string
+  start_line: number
+  end_line: number
+  contract_name: string
+  risk_level: Severity | 'none'
+  vulnerabilities: VulnerabilityId[]
+}
+
+export interface ContractUnit {
+  name: string
+  file_path: string
+  functions: FunctionUnit[]
+}
+
+// ============= Health =============
+export interface HealthResponse {
+  status: string
+  workers: number
+  tasks: Record<string, number>
+  database: string
+}
+
+export interface LlmStatusResponse {
+  configured: boolean
+  provider: string
+  model: string
+  base_url: string
+  api_key_configured: boolean
+  missing: string[]
+  temperature: number
+  timeout_seconds: number
+  reachable?: boolean
+  message?: string
+}
+
+// ============= Agent Runtime =============
+export type AgentRuntimeStatus = 'pending' | 'running' | 'succeeded' | 'failed' | 'skipped' | 'incomplete'
+
+export interface AgentRuntimeLogEvent {
+  time?: string
+  task_id?: string
+  event: string
+  message: string
+  phase?: string
+  label?: string
+  seconds?: number
+  [key: string]: unknown
+}
+
+export interface AgentReportContribution {
+  type: string
+  title: string
+  description: string
+  items: unknown[]
+}
+
+export interface AgentRuntime {
+  agent_id: string
+  name: string
+  description: string
+  status: AgentRuntimeStatus
+  started_at?: string
+  finished_at?: string
+  duration_seconds: number
+  inputs: Record<string, unknown>
+  outputs: Record<string, unknown>
+  report_contributions: AgentReportContribution[]
+  logs: AgentRuntimeLogEvent[]
+}
+
+export interface AgentRuntimeResponse {
+  task_id: string
+  status: TaskStatus
+  audit_log_path: string
+  agents: AgentRuntime[]
+}
+
+// ============= Call Graph =============
+export interface CallGraphNode {
+  id: string
+  name: string
+  category: 'contract' | 'function'
+  contractName: string
+  riskLevel: Severity | 'none'
+  symbolSize: number
+  crossContractFindings: number
+  rFunc?: number
+}
+
+export interface CallGraphEdge {
+  source: string
+  target: string
+  callType: 'internal' | 'external'
+  methodName?: string
+  riskFlag: boolean
+}
+
+export interface CallGraphData {
+  nodes: CallGraphNode[]
+  edges: CallGraphEdge[]
+}
+
+// ============= Monaco Marker =============
+export interface VulnerabilityMarker {
+  startLineNumber: number
+  endLineNumber: number
+  startColumn: number
+  endColumn: number
+  severity: Severity
+  message: string
+  vulnerabilityId: VulnerabilityId
+  confidence: number
+  modelSources: string[]
+  findingId: string
+}
