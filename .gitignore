@@ -1,0 +1,84 @@
+# ------------------------------------------------------------------
+# Python
+# ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# ------------------------------------------------------------------
+# Node
+# ------------------------------------------------------------------
+node_modules/
+**/node_modules/
+frontend/dist/
+dist-ssr
+*.local
+
+# ------------------------------------------------------------------
+# Secrets / local environment  (never commit these)
+# ------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+.env.bak*
+*.pem
+*.key
+
+# keep the template
+!.env.example
+
+# ------------------------------------------------------------------
+# Local runtime / reproduction environment
+# ------------------------------------------------------------------
+/.conda/
+/pgdata/
+/.runtime/
+/.npm-cache/
+/.artifacts/
+/.venv/
+/pg.log
+*.log
+logs/
+
+# ------------------------------------------------------------------
+# Runtime outputs & generated data
+# ------------------------------------------------------------------
+/backend_outputs/
+/cross-contract_detection/cross-contract_detection/generated_copy/
+/cross-contract_detection/cross-contract_detection/generated/
+/cross-contract_detection/cross-contract_detection/**/generated_copy/
+
+# Large generated datasets and archives not needed by the backend service
+/dataset/
+/generated_smart_contracts/
+/result/
+/result_evaluation/
+/unknown_detect/
+/classification_vulnerabilities/
+/data_processing/
+/cross-contract_detection.zip
+/generated_text.csv
+
+# Training / intermediate feature dumps under LG-DeepSVDD.
+# Deployed model files are kept:
+#   LG-DeepSVDD/pretrain/semantic features/LSTM/outputs/*.h5
+#   LG-DeepSVDD/pretrain/semantic features/LSTM/tok.pickle
+#   LG-DeepSVDD/DeepSVDD/outputs/models/*.h5
+/LG-DeepSVDD/result/contractward/features/
+/LG-DeepSVDD/**/__pycache__/
+
+# ------------------------------------------------------------------
+# IDE / OS
+# ------------------------------------------------------------------
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local editor/agent settings
+/.claude/
