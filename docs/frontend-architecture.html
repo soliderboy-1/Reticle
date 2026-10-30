@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>Reticle 前端框架图</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 34px 38px;
+    width: 1500px;
+    background: radial-gradient(900px 380px at 8% -8%, rgba(0,113,227,.10), transparent 60%),
+                radial-gradient(760px 360px at 96% 0%, rgba(139,92,246,.10), transparent 60%),
+                #f5f5f7;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    color: #1d1d1f; -webkit-font-smoothing: antialiased;
+  }
+  header { text-align: center; margin-bottom: 24px; }
+  h1 { font-size: 27px; font-weight: 600; letter-spacing: -.025em; margin: 0 0 6px; }
+  .sub { font-size: 12.5px; color: #6e6e73; }
+  .wrap { display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
+  .stack { display: flex; flex-direction: column; }
+
+  .layer {
+    display: flex; gap: 14px; align-items: stretch;
+    background: #fff; border: 1px solid rgba(0,0,0,.06);
+    border-radius: 18px; padding: 14px 16px;
+    box-shadow: 0 12px 30px -26px rgba(0,0,0,.35);
+  }
+  .num {
+    flex: 0 0 auto; width: 30px; height: 30px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: #fff;
+  }
+  .l0 .num { background: #1d1d1f; }
+  .l1 .num { background: #0071e3; }
+  .l2 .num { background: #4b6fe8; }
+  .l3 .num { background: #7d4bd1; }
+  .l4 .num { background: #0a8f7a; }
+  .l5 .num { background: #b25000; }
+  .l6 .num { background: #d70015; }
+
+  .body { flex: 1; min-width: 0; }
+  .lhead { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .lname { font-size: 13px; font-weight: 600; }
+  .lpath { font-size: 11px; color: #86868b; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 10.5px; padding: 3px 8px; border-radius: 7px;
+    background: #f5f5f7; border: 1px solid rgba(0,0,0,.05); color: #424245;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+  }
+  .chip.k { background: rgba(0,113,227,.07); border-color: rgba(0,113,227,.12); color: #0058b0; }
+
+  .views { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .view {
+    font-size: 10.5px; text-align: center; padding: 7px 4px; border-radius: 9px;
+    background: #faf9ff; border: 1px solid rgba(125,75,209,.12); color: #4b3670;
+  }
+  .view b { display: block; font-size: 10px; font-weight: 600; color: #7d4bd1; margin-bottom: 1px; }
+  .view.public { background: #f4faf8; border-color: rgba(10,143,122,.14); color: #2c5c53; }
+  .view.public b { color: #0a8f7a; }
+
+  .groups { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+  .group { background: #f8fbfa; border: 1px solid rgba(10,143,122,.12); border-radius: 10px; padding: 7px 8px; }
+  .gname { font-size: 10px; font-weight: 600; color: #0a8f7a; margin-bottom: 3px; }
+  .group div.item { font-size: 9.5px; color: #5b6b68; line-height: 1.45; font-family: ui-monospace, Menlo, monospace; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .box { background: #fff8f2; border: 1px solid rgba(178,80,0,.12); border-radius: 10px; padding: 8px 10px; }
+  .box h4 { margin: 0 0 4px; font-size: 10.5px; font-weight: 600; color: #b25000; }
+  .box p { margin: 0; font-size: 9.8px; color: #6e635c; line-height: 1.5; }
+  .box code { font-family: ui-monospace, Menlo, monospace; font-size: 9.3px; color: #8a4b12; }
+
+  .arrow { height: 18px; display: flex; align-items: center; justify-content: center; color: #c7c7cc; font-size: 13px; }
+  .rail { display: flex; flex-direction: column; gap: 12px; }
+  .rail .card { background: #fff; border: 1px solid rgba(0,0,0,.06); border-radius: 16px; padding: 13px 14px; box-shadow: 0 12px 30px -26px rgba(0,0,0,.35); }
+  .rail h3 { margin: 0 0 7px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #86868b; font-weight: 600; }
+  .rail ul { margin: 0; padding: 0; list-style: none; }
+  .rail li { font-size: 10.5px; color: #424245; padding: 3px 0; display: flex; gap: 6px; line-height: 1.45; }
+  .rail li span { color: #aeaeb2; font-family: ui-monospace, Menlo, monospace; font-size: 9.6px; }
+  .flow { display: flex; flex-direction: column; gap: 5px; }
+  .flow div { font-size: 10px; color: #424245; background: #f5f5f7; border-radius: 7px; padding: 5px 8px; }
+  .flow b { color: #0071e3; font-weight: 600; }
+  .note { font-size: 10px; color: #86868b; line-height: 1.5; margin-top: 6px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Reticle 前端框架</h1>
+    <div class="sub">Vue 3.5 · Vite 8 · TypeScript · Pinia · Tailwind v4 · ECharts / Monaco</div>
+  </header>
+
+  <div class="wrap">
+    <div class="stack">
+      <!-- 入口 -->
+      <section class="layer l0">
+        <div class="num">01</div>
+        <div class="body">
+          <div class="lhead"><span class="lname">入口层</span><span class="lpath">index.html → src/main.ts</span></div>
+          <div class="chips">
+            <span class="chip k">createApp(App)</span>
+            <span class="chip">createPinia()</span>
+            <span class="chip">router</span>
+            <span class="chip">v-reveal 指令</span>
+            <span class="chip">style.css</span>
+          </div>
+        </div>
+      </section>
+      <div class="arrow">▼</div>
+
+      <!-- 路由 -->
+      <section class="layer l1">
+        <div class="num">02</div>
+        <div class="body">
+          <div class="lhead"><span class="lname">路由层</span><span class="lpath">src/router/index.ts</span></div>
+          <div class="chips">
+            <span class="chip">createWebHistory</span>
+            <span class="chip k">路由守卫：localStorage.access_token</span>
+            <span class="chip">懒加载 import()</span>
+            <span class="chip">/login · /register 公开</span>
+            <span class="chip">其余 requiresAuth</span>
+          </div>
+        </div>
+      </section>
+      <div class="arrow">▼</div>
+
+      <!-- 布局 -->
+      <section class="layer l2">
+        <div class="num">03</div>
+        <div class="body">
+          <div class="lhead"><span class="lname">布局层</span><span class="lpath">components/layout/MainLayout.vue</span></div>
+          <div class="chips">
+            <span class="chip k">Sidebar.vue</span>
+            <span class="chip k">Header.vue</span>
+            <span class="chip">页面过渡 Transition</span>
+            <span class="chip">mesh-bg 极光背景</span>
+            <span class="chip">RouterView</span>
+          </div>
+        </div>
+      </section>
+      <div class="arrow">▼</div>
+
+      <!-- 页面 -->
+      <section class="layer l3">
+        <div class="num">04</div>
+        <div class="body">
+          <div class="lhead"><span class="lname">页面层 · views</span><span class="lpath">10 个路由页面</span></div>
+          <div class="views">
+            <div class="view public"><b>公开</b>Login</div>
+            <div class="view public"><b>公开</b>Register</div>
+            <div class="view"><b>/</b>Dashboard</div>
+            <div class="view"><b>/tasks</b>TaskHistory</div>
+            <div class="view"><b>/audit/:id</b>AuditDetail</div>
+            <div class="view"><b>/agents/:id</b>AgentRuntime</div>
+            <div class="view"><b>/cross-contract</b>CrossContract</div>
+            <div class="view"><b>/risk-ranking</b>FunctionRisk</div>
+            <div class="view"><b>/repair</b>RepairSuggestions</div>
+            <div class="view"><b>/report/:id</b>Report</div>
+          </div>
+        </div>
+      </section>
+      <div class="arrow">▼</div>
+
+      <!-- 组件 -->
+      <section class="layer l4">
+        <div class="num">05</div>
+        <div class="body">
+          <div class="lhead"><span class="lname">组件层 · components</span><span class="lpath">按功能域分组</span></div>
+          <div class="groups">
+            <div class="group"><div class="gname">layout</div><div class="item">Sidebar</div><div class="item">Header</div></div>
+            <div class="group"><div class="gname">dashboard</div><div class="item">NewTaskDialog</div><div class="item">FunctionRiskRanking</div><div class="item">RepairSuggestions</div><div class="item">CallGraph</div></div>
+            <div class="group"><div class="gname">analytics</div><div class="item">RiskRankingTable</div><div class="item">RiskWarningList</div><div class="item">RadarChart</div><div class="item">TimelinePanel</div></div>
+            <div class="group"><div class="gname">editor</div><div class="item">CodeEditor</div><div class="item">MonacoCodeViewer</div><div class="item">MonacoDiffEditor</div></div>
+            <div class="group"><div class="gname">panels</div><div class="item">FindingDetailPanel</div><div class="item">ReasoningPathPanel</div></div>
+          </div>
+        </div>
+      </section>
+      <div class="arrow">▼</div>
+
+      <!-- 状态 -->
+      <section class="layer l5">
+        <div class="num">06</div>
+        <div class="body">
+          <div class="lhead"><span class="lname">状态与逻辑层</span><span class="lpath">stores · composables · directives · types</span></div>
+          <div class="split">
+            <div class="box">
+              <h4>Pinia stores</h4>
+              <p><code>auth.ts</code>：token / user / login / logout<br/>
+              <code>audit.ts</code>：tasks · currentTask · currentReport · 3s 轮询 · 阶段日志</p>
+            </div>
+            <div class="box">
+              <h4>复用逻辑</h4>
+              <p><code>useCallGraph.ts</code>：报告 → 调用图节点/边<br/>
+              <code>directives/reveal.ts</code>：IntersectionObserver 滚动揭示<br/>
+              <code>types/index.ts</code>：全量接口类型</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="arrow">▼</div>
+
+      <!-- 通信 -->
+      <section class="layer l6">
+        <div class="num">07</div>
+        <div class="body">
+          <div class="lhead"><span class="lname">通信层</span><span class="lpath">src/api</span></div>
+          <div class="chips">
+            <span class="chip k">axios client（baseURL /api/v1）</span>
+            <span class="chip">请求拦截器注入 Bearer Token</span>
+            <span class="chip">401 → 清除并跳转 /login</span>
+            <span class="chip">authApi</span>
+            <span class="chip">auditsApi</span>
+            <span class="chip">reportsApi</span>
+            <span class="chip">llmApi / healthApi</span>
+            <span class="chip k">Vite proxy /api → 127.0.0.1:8000</span>
+            <span class="chip">FastAPI 后端</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 右侧栏 -->
+    <aside class="rail">
+      <div class="card">
+        <h3>数据流</h3>
+        <div class="flow">
+          <div><b>View</b> 触发动作</div>
+          <div>↓</div>
+          <div><b>Pinia store</b> 更新状态</div>
+          <div>↓</div>
+          <div><b>api/*</b> 发请求（带 Token）</div>
+          <div>↓</div>
+          <div><b>FastAPI</b> 返回任务 / 报告</div>
+          <div>↓</div>
+          <div>store 轮询 <b>3s</b> → 响应式重渲染</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>样式体系</h3>
+        <ul>
+          <li><span>style.css</span>设计令牌 + 毛玻璃</li>
+          <li><span>@theme</span>Tailwind v4 变量</li>
+          <li><span>.glass / .card</span>视觉组件类</li>
+          <li><span>.reveal</span>滚动揭示动画</li>
+          <li><span>theme bridge</span>旧页面浅色适配</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>构建与资源</h3>
+        <ul>
+          <li><span>Vite 8</span>dev / build</li>
+          <li><span>vue-tsc</span>类型检查</li>
+          <li><span>plugin-vue</span>SFC 编译</li>
+          <li><span>tailwindcss/vite</span>原子样式</li>
+          <li><span>public/</span>favicon · logo-samples</li>
+          <li><span>ECharts / Monaco</span>按需异步加载</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>本地状态</h3>
+        <ul>
+          <li><span>localStorage</span>access_token</li>
+          <li><span>localStorage</span>user</li>
+          <li><span>轮询</span>startPolling(3s)</li>
+        </ul>
+        <div class="note">Token 由后端签发，401 时自动清理并回到登录页。</div>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

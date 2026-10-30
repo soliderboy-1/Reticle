@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>Reticle 页面地图</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 30px;
+    width: 1640px;
+    background: radial-gradient(800px 340px at 6% -6%, rgba(0,113,227,.09), transparent 60%),
+                radial-gradient(700px 320px at 96% 0%, rgba(139,92,246,.09), transparent 60%),
+                #f5f5f7;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    color: #1d1d1f; -webkit-font-smoothing: antialiased;
+  }
+  header { text-align: center; margin-bottom: 20px; }
+  h1 { font-size: 25px; font-weight: 600; letter-spacing: -.02em; margin: 0 0 5px; }
+  .sub { font-size: 12px; color: #6e6e73; }
+  .shell { display: flex; gap: 8px; align-items: center; background: #fff; border: 1px solid rgba(0,0,0,.06); border-radius: 14px; padding: 10px 14px; margin: 0 auto 16px; max-width: 900px; box-shadow: 0 12px 30px -28px rgba(0,0,0,.4); }
+  .shell .lbl { font-size: 10px; color: #86868b; letter-spacing: .1em; text-transform: uppercase; }
+  .shell .pill { font-size: 10.5px; background: #f5f5f7; border-radius: 7px; padding: 3px 8px; color: #424245; font-family: ui-monospace, Menlo, monospace; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .page { background: #fff; border: 1px solid rgba(0,0,0,.06); border-radius: 18px; padding: 13px 14px; display: flex; flex-direction: column; gap: 9px; box-shadow: 0 12px 30px -28px rgba(0,0,0,.35); }
+  .ph { display: flex; align-items: center; gap: 8px; }
+  .idx { width: 22px; height: 22px; border-radius: 8px; background: #1d1d1f; color: #fff; font-size: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+  .nm { font-size: 12.5px; font-weight: 600; }
+  .rt { font-size: 10px; color: #86868b; font-family: ui-monospace, Menlo, monospace; margin-top: 1px; }
+  .tag { margin-left: auto; font-size: 9px; color: #86868b; background: #f5f5f7; border-radius: 6px; padding: 2px 6px; white-space: nowrap; }
+  .pb { display: flex; gap: 12px; }
+  .wf { flex: 0 0 208px; height: 146px; background: #f7f8fa; border: 1px solid rgba(0,0,0,.04); border-radius: 10px; padding: 7px; display: flex; flex-direction: column; gap: 4px; }
+  .info { flex: 1; min-width: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px; }
+  .chips span { font-size: 8.6px; font-family: ui-monospace, Menlo, monospace; background: #eef4ff; color: #0058b0; padding: 2px 5px; border-radius: 5px; }
+  .chips span.g { background: #eefaf5; color: #0a7a5f; }
+  ul { margin: 0; padding-left: 11px; }
+  li { font-size: 10px; line-height: 1.55; color: #424245; }
+  li b { color: #1d1d1f; font-weight: 600; }
+  .b { background: #e2e7ee; border-radius: 4px; }
+  .b.acc { background: #cfe3fb; }
+  .b.deep { background: #c6ccd6; }
+  .b.soft { background: #eceff4; }
+  .b.warn { background: #fbe2d5; }
+  .b.ok { background: #d6f0e3; }
+  .row { display: flex; gap: 4px; }
+  .grow { flex: 1; }
+  .h8 { height: 8px; } .h10 { height: 10px; } .h14 { height: 14px; } .h20 { height: 20px; } .h30 { height: 30px; } .h40 { height: 40px; }
+  .wf.center { justify-content: center; align-items: center; }
+  .login-card { width: 116px; background: #fff; border: 1px solid rgba(0,0,0,.06); border-radius: 8px; padding: 7px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 8px 18px -14px rgba(0,0,0,.4); }
+  .avatar { width: 18px; height: 18px; border-radius: 6px; background: #1d1d1f; margin: 0 auto 2px; }
+  .dots { display: flex; gap: 3px; justify-content: center; }
+  .dot { width: 4px; height: 4px; border-radius: 50%; background: #c7c7cc; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Reticle 页面地图</h1>
+    <div class="sub">10 个路由页面 · 左侧为页面布局示意，右侧为组件与功能</div>
+  </header>
+
+  <div class="shell">
+    <span class="lbl">全局壳层</span>
+    <span class="pill">Sidebar 264px</span>
+    <span class="pill">Header 64px</span>
+    <span class="pill">RouterView 内容区</span>
+    <span class="pill">NewTaskDialog 弹窗</span>
+    <span class="pill">页面过渡</span>
+    <span class="pill">浅色极光背景</span>
+  </div>
+
+  <div class="grid">
+    <!-- 01 Dashboard -->
+    <article class="page">
+      <div class="ph"><span class="idx">01</span><div><div class="nm">Dashboard 总览</div><div class="rt">/</div></div><span class="tag">需登录</span></div>
+      <div class="pb">
+        <div class="wf">
+          <div class="b h8" style="width:52%;margin:0 auto"></div>
+          <div class="b deep h14" style="width:76%;margin:0 auto"></div>
+          <div class="b h8" style="width:64%;margin:0 auto"></div>
+          <div class="row" style="justify-content:center"><div class="b acc h10" style="width:34px"></div><div class="b h10" style="width:34px"></div></div>
+          <div class="b soft h30" style="margin:2px 10px 0"></div>
+          <div class="row"><div class="b grow h14"></div><div class="b grow h14"></div><div class="b grow h14"></div><div class="b grow h14"></div></div>
+          <div class="row grow"><div class="b grow"></div><div class="b grow" style="flex:.45"></div></div>
+        </div>
+        <div class="info">
+          <div class="chips"><span>NewTaskDialog</span><span class="g">llmApi.status</span></div>
+          <ul>
+            <li><b>Hero</b>：标题 + 两个 CTA + LLM 状态探测</li>
+            <li><b>浮动玻璃卡</b>：任务计数 + 完成度（鼠标视差）</li>
+            <li><b>4 KPI</b>：累计 / 完成 / 进行中 / 异常</li>
+            <li><b>最近任务</b>：5 条，点击进详情</li>
+            <li><b>流程 stepper</b> + 4 张能力卡</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 02 TaskHistory -->
+    <article class="page">
+      <div class="ph"><span class="idx">02</span><div><div class="nm">TaskHistory 历史任务</div><div class="rt">/tasks</div></div><span class="tag">需登录</span></div>
+      <div class="pb">
+        <div class="wf">
+          <div class="row"><div class="b deep h10 grow"></div><div class="b h10" style="width:26px"></div><div class="b h10" style="width:26px"></div><div class="b h10" style="width:20px"></div></div>
+          <div class="row"><div class="b h8" style="width:26px"></div><div class="b h8" style="width:26px"></div><div class="b h8" style="width:26px"></div><div class="b ok h8" style="width:26px"></div><div class="b h8" style="width:26px"></div></div>
+          <div class="row"><div class="b deep h10" style="width:34%"></div><div class="b deep h10" style="width:14%"></div><div class="b deep h10" style="width:14%"></div><div class="b deep h10 grow"></div></div>
+          <div class="row"><div class="b soft h14" style="width:34%"></div><div class="b soft h14" style="width:14%"></div><div class="b soft h14" style="width:14%"></div><div class="b soft h14 grow"></div></div>
+          <div class="row"><div class="b soft h14" style="width:34%"></div><div class="b soft h14" style="width:14%"></div><div class="b soft h14" style="width:14%"></div><div class="b soft h14 grow"></div></div>
+          <div class="row"><div class="b soft h14" style="width:34%"></div><div class="b soft h14" style="width:14%"></div><div class="b soft h14" style="width:14%"></div><div class="b soft h14 grow"></div></div>
+          <div class="row" style="margin-top:auto;justify-content:flex-end"><div class="b h8" style="width:22px"></div><div class="b h8" style="width:40px"></div></div>
+        </div>
+        <div class="info">
+          <div class="chips"><span class="g">store.fetchAllTasks</span><span class="g">fetchTaskLogs</span></div>
+          <ul>
+            <li><b>筛选</b>：状态、风险等级、日期范围、重置</li>
+            <li><b>状态 pill</b>：点击即筛选</li>
+            <li><b>表格</b>：任务 / 状态 / 风险 / 进度 / 时间 / 操作</li>
+            <li><b>行操作</b>：日志 · 报告 · 重试</li>
+            <li><b>分页</b> + 日志弹层</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 03 AuditDetail -->
+    <article class="page">
+      <div class="ph"><span class="idx">03</span><div><div class="nm">AuditDetail 审计详情</div><div class="rt">/audit/:taskId</div></div><span class="tag">需登录</span></div>
+      <div class="pb">
+        <div class="wf">
+          <div class="row"><div class="b acc grow h20"></div><div class="b ok grow h20"></div><div class="b warn grow h20"></div><div class="b warn grow h20"></div><div class="b soft grow h20"></div></div>
+          <div class="b soft h14"></div>
+          <div class="b soft h14"></div>
+          <div class="row" style="margin-top:2px"><div class="b deep h8" style="width:22%"></div><div class="b h8" style="width:26%"></div><div class="b h8" style="width:22%"></div><div class="b h8 grow"></div></div>
+          <div class="row grow"><div class="b soft grow"></div></div>
+        </div>
+        <div class="info">
+          <div class="chips"><span>TopCards</span><span>TimelinePanel</span><span>RiskRankingTable</span><span>RiskWarningList</span><span>ReasoningPathPanel</span></div>
+          <ul>
+            <li><b>4 种状态</b>：加载 / 运行中（可取消）/ 失败（重试）/ 成功</li>
+            <li><b>顶部 KPI</b> + 合约级结果列表</li>
+            <li><b>4 Tab</b>：执行流程 · 风险 TOP10 · 其他风险 · 推理路径</li>
+            <li><b>轮询</b> 3s；<b>?tab=</b> 可深链</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 04 Report -->
+    <article class="page">
+      <div class="ph"><span class="idx">04</span><div><div class="nm">Report 审计报告</div><div class="rt">/report/:taskId</div></div><span class="tag">需登录</span></div>
+      <div class="pb">
+        <div class="wf">
+          <div class="row"><div class="b soft grow h24"></div><div class="b acc h24" style="width:40px"></div></div>
+          <div class="row"><div class="b grow h14"></div><div class="b grow h14"></div><div class="b grow h14"></div><div class="b grow h14"></div><div class="b grow h14"></div><div class="b grow h14"></div><div class="b grow h14"></div></div>
+          <div class="b soft grow"></div>
+          <div class="b soft h14"></div>
+        </div>
+        <div class="info">
+          <div class="chips"><span class="g">marked</span><span class="g">reportsApi.getReportMarkdown</span></div>
+          <ul>
+            <li><b>元信息</b>：任务 / 模式 / 耗时 / 生成时间</li>
+            <li><b>7 张统计卡</b>：总数 / 已验证 / 疑似 / 高 / 中 / 低 / 预警</li>
+            <li><b>Markdown 报告</b>：标题、表格、代码块</li>
+            <li><b>执行流程时间线</b> + 下载 Markdown</li>
+            <li>打印样式（隐藏侧栏）</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 05 AgentRuntime -->
+    <article class="page">
+      <div class="ph"><span class="idx">05</span><div><div class="nm">AgentRuntime 智能体运行</div><div class="rt">/agents/:taskId?</div></div><span class="tag">需登录</span></div>
+      <div class="pb">
+        <div class="wf">
+          <div class="row grow">
+            <div style="flex:.4;display:flex;flex-direction:column;gap:4px">
+              <div class="b acc grow"></div><div class="b soft grow"></div><div class="b soft grow"></div><div class="b soft grow"></div><div class="b soft grow"></div>
+            </div>
+            <div style="flex:.6;display:flex;flex-direction:column;gap:4px">
+              <div class="b soft h14"></div>
+              <div class="row" style="flex:.6"><div class="b soft grow"></div><div class="b soft grow"></div></div>
+              <div class="b soft grow"></div>
+              <div class="b soft h14"></div>
+            </div>
+          </div>
+        </div>
+        <div class="info">
+          <div class="chips"><span class="g">reportsApi.getAgents</span></div>
+          <ul>
+            <li><b>左列</b>：5 类智能体 + 状态 / 耗时 / 日志数</li>
+            <li><b>右列</b>：概要、输入输出摘要、报告贡献、执行日志</li>
+            <li><b>刷新</b> 按钮重新拉取</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 06 CrossContract -->
+    <article class="page">
+      <div class="ph"><span class="idx">06</span><div><div class="nm">CrossContract 跨合约调用图</div><div class="rt">/cross-contract</div></div><span class="tag">需登录</span></div>
+      <div class="pb">
+        <div class="wf">
+          <div class="row"><div class="b grow h16"></div><div class="b grow h16"></div><div class="b grow h16"></div><div class="b grow h16"></div><div class="b grow h16"></div></div>
+          <div class="row grow">
+            <div class="b soft grow" style="position:relative">
+              <span style="position:absolute;left:30%;top:35%;width:10px;height:10px;border-radius:50%;background:#cfe3fb"></span>
+              <span style="position:absolute;left:58%;top:22%;width:8px;height:8px;border-radius:50%;background:#c6ccd6"></span>
+              <span style="position:absolute;left:48%;top:62%;width:9px;height:9px;border-radius:50%;background:#fbe2d5"></span>
+            </div>
+            <div style="flex:0 0 56px;display:flex;flex-direction:column;gap:4px"><div class="b soft grow"></div></div>
+          </div>
+        </div>
+        <div class="info">
+          <div class="chips"><span>CallGraph</span><span class="g">useCallGraph</span></div>
+          <ul>
+            <li><b>5 张统计</b>：合约 / 函数 / 调用边 / 风险边 / 跨合约发现</li>
+            <li><b>调用图</b>：缩放、拖拽、重置、图例</li>
+            <li><b>节点详情</b>：类型、风险等级、R_func、GCN 说明</li>
+            <li>边悬停显示方法名</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 07 FunctionRiskRanking -->
+    <article class="page">
+      <div class="ph"><span class="idx">07</span><div><div class="nm">FunctionRiskRanking 函数风险排名</div><div class="rt">/risk-ranking</div></div><span class="tag">需登录</span></div>
+      <div class="pb">
+        <div class="wf">
+          <div class="row"><div class="b deep h10 grow"></div><div class="b h10" style="width:44px"></div></div>
+          <div class="row"><div class="b deep h8" style="width:26%"></div><div class="b deep h8" style="width:12%"></div><div class="b deep h8" style="width:12%"></div><div class="b deep h8" style="width:12%"></div><div class="b deep h8 grow"></div></div>
+          <div class="row"><div class="b soft h12" style="width:26%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12 grow"></div></div>
+          <div class="row"><div class="b soft h12" style="width:26%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12 grow"></div></div>
+          <div class="row"><div class="b soft h12" style="width:26%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12 grow"></div></div>
+          <div class="row"><div class="b soft h12" style="width:26%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12" style="width:12%"></div><div class="b soft h12 grow"></div></div>
+        </div>
+        <div class="info">
+          <div class="chips"><span>FunctionRiskRanking</span></div>
+          <ul>
+            <li><b>全量函数风险表</b>：LSTM / 异常 / GCN / 静态 / 业务 / R_func / 等级</li>
+            <li><b>行选中</b> selectRiskVector</li>
+            <li><b>跳转</b> 审计详情；空态引导建任务</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 08 RepairSuggestions -->
+    <article class="page">
+      <div class="ph"><span class="idx">08</span><div><div class="nm">RepairSuggestions 修复建议</div><div class="rt">/repair</div></div><span class="tag">需登录</span></div>
+      <div class="pb">
+        <div class="wf">
+          <div class="row"><div class="b deep h10 grow"></div><div class="b ok h10" style="width:34px"></div></div>
+          <div class="b soft h34"></div>
+          <div class="row"><div class="b soft grow"></div><div class="b acc grow"></div></div>
+          <div class="b soft h34"></div>
+          <div class="row"><div class="b soft grow"></div><div class="b acc grow"></div></div>
+        </div>
+        <div class="info">
+          <div class="chips"><span>RepairSuggestions</span><span>MonacoCodeViewer</span><span>MonacoDiffEditor</span></div>
+          <ul>
+            <li><b>按 finding 分卡</b>：策略 / 补丁 / 复测清单</li>
+            <li><b>补丁前后 Diff</b> 对比</li>
+            <li><b>可修复数量</b>统计；空态引导</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 09 Login -->
+    <article class="page">
+      <div class="ph"><span class="idx">09</span><div><div class="nm">Login 登录</div><div class="rt">/login</div></div><span class="tag">公开</span></div>
+      <div class="pb">
+        <div class="wf center">
+          <div class="login-card">
+            <div class="avatar"></div>
+            <div class="b deep h10" style="width:56%;margin:0 auto"></div>
+            <div class="b h6" style="width:76%;margin:0 auto;height:6px"></div>
+            <div class="b soft h10"></div>
+            <div class="b soft h10"></div>
+            <div class="b acc h12"></div>
+            <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          </div>
+        </div>
+        <div class="info">
+          <div class="chips"><span class="g">authStore.login</span></div>
+          <ul>
+            <li><b>表单</b>：用户名 + 密码 + 错误提示</li>
+            <li><b>联动</b>：跳注册、演示账号</li>
+            <li><b>视觉</b>：Reticle 石墨 Logo + 玻璃卡 + 极光</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 10 Register -->
+    <article class="page">
+      <div class="ph"><span class="idx">10</span><div><div class="nm">Register 注册</div><div class="rt">/register</div></div><span class="tag">公开</span></div>
+      <div class="pb">
+        <div class="wf center">
+          <div class="login-card">
+            <div class="avatar"></div>
+            <div class="b soft h9"></div>
+            <div class="b soft h9"></div>
+            <div class="b soft h9"></div>
+            <div class="b soft h9"></div>
+            <div class="b acc h11"></div>
+          </div>
+        </div>
+        <div class="info">
+          <div class="chips"><span class="g">authStore.register</span></div>
+          <ul>
+            <li><b>字段</b>：用户名 / 显示名 / 密码 / 确认密码</li>
+            <li><b>校验</b>：用户名 ≥3、密码 ≥8、两次一致</li>
+            <li><b>成功</b>：自动登录并跳首页</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </div>
+</body>
+</html>
